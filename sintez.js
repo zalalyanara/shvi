@@ -57,5 +57,20 @@ async function encodeWAV(
 }
 
 const tokenize = (input) => {
-  throw new Error("Not implemented");
+  const arr = [];
+  
+  const tokens = input.split(/\s+/).filter(Boolean);
+
+  tokens.forEach((token) => {
+    token = token.trim(); 
+    
+    if (!isNaN(token) && token !== '') {
+      arr.push(Number(token)); 
+    }
+    else {
+      arr.push(Symbol.for(token)); 
+    }
+  });
+
+  return arr;
 };
