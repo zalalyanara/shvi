@@ -140,7 +140,7 @@ Deno.test("Recursion", async (t) => {
       const emptyStringResult = strip("", "re");
       const emptySubstringResult = strip("Skies are grey in Greece", "");
       assertEquals(generalResult, "Skies a gy in Gece");
-      assertEquals(emptySubstringResult, "Skies a gy in Gece");
+      assertEquals(emptySubstringResult, "Skies are grey in Greece");
       assertEquals(emptyStringResult, "");
     },
   });
@@ -154,7 +154,6 @@ Deno.test("Recursion", async (t) => {
       // Move to the next element and repeat the process
 
       const flatten = (arr) => {
-        // Base case: if the array is empty, return an empty array
         if (arr.length === 0) {
           return [];
         }
