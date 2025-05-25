@@ -72,17 +72,50 @@ const typeify = (token) => {
 
 const tokenize = (input) => {
   const arr = [];
+  
+  // Helper function to check if a string is a valid number (not just NaN)
+  const isNumeric = (str) => !isNaN(str) && !isNaN(parseFloat(str));
 
+  // Main recursive function
   const loop = (
-    progressiveScope,
-    [graphemeAtHand, ...restOfGraphemes],
-    tokenSoFar = "",
+    [graphemeAtHand, ...restOfGraphemes], 
+    tokenSoFar = ""
   ) => {
-    throw new Error("Not implemented");
+    if (graphemeAtHand == undefined) {
+      // End of input, finalize the last token
+      if (tokenSoFar.trim()) {
+        if (isNumeric(tokenSoFar)) {
+          arr.push(parseFloat(tokenSoFar)); // assuming 'atom' converts the number to an atomic form
+        } else {
+          arr.push(atom(tokenSoFar));
+        }
+      }
+      return;
+    }
+
+    // If the character is a space, finalize the token so far
+    if (graphemeAtHand === " ") {
+      if (tokenSoFar.trim()) {
+        if (isNumeric(tokenSoFar)) {
+          arr.push(parseFloat(tokenSoFar)); // process numeric token
+        } else {
+          arr.push(atom(tokenSoFar)); // process non-numeric token
+        }
+      }
+      // Recursively call for the next part of the string
+      loop(restOfGraphemes, "");
+    } else {
+      // Otherwise, keep adding the current grapheme to the token
+      loop(restOfGraphemes, tokenSoFar + graphemeAtHand);
+    }
   };
 
-  return loop([[]], graphemes);
+  // Start recursion with input as an array of graphemes
+  loop(input.split(''));
+  
+  return arr;
 };
+
 
 const evaluate = (expression) => {
   // If the expression is a number, return it
@@ -90,5 +123,11 @@ const evaluate = (expression) => {
   //   assume the first element is a function and the rest are arguments
   //   evaluate the function with the arguments
 
-  throw new Error("Not implemented");
+  if (isNaN(expression)) {
+    return expression;
+  }
+  if (Array.isArray(expression)) {
+    const [func, ...args] = expression;
+    return func(...args);
+  }
 };
